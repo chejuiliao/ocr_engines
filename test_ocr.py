@@ -9,7 +9,7 @@ def create_img(file: str, text):
     :return: None
     :rtype: None
     """
-    img = Image.new('RGB', (200, 50), color = (255, 255, 255))
+    img = Image.new('RGB', (200, 50), color = (255, 255, 255))  # initialize an empty image
     d = ImageDraw.Draw(img)
     fnt = ImageFont.truetype('arial.ttf', 15)  # set up font
     d.text((10,10), str(text), font=fnt, fill=(0,0,0))  # write text on image
@@ -45,9 +45,9 @@ def tesseract_read(file: str):
     :return: text
     :rtype: str
     """
-    hocr = pytesseract.image_to_pdf_or_hocr(file, extension='hocr')
+    hocr = pytesseract.image_to_pdf_or_hocr(file, extension='hocr')  # convert file to hocr format
     xml = hocr.decode('utf-8')
-    doc = parse_xml(xml)
+    doc = parse_xml(xml)  # make the xml accessible by xpath
     tsa_output = []
 
     # get text
@@ -70,9 +70,9 @@ def easyocr_read(file: str):
     """
     reader = easyocr.Reader(['th','en'], gpu = True)
     results = reader.readtext(file)
-    results = sorted(results, key=lambda x: x[0][0])
-    text_results = [x[-2] for x in results][0]
-    easy_output = text_results.strip()
+    results = sorted(results, key=lambda x: x[0][0])  # sort text from left to right
+    text_results = [x[-2] for x in results][0]  # get text
+    easy_output = text_results.strip()  # clean unnecessary space
     
     return easy_output
 
@@ -91,22 +91,19 @@ def compare_diff(df, wrong_column: str, answer_column: str):
     """
 
     df = df.copy()
-    df['add'] = ''
-    df['delete'] = ''
-    for idx, row in df.iterrows():
-        a = row[wrong_column]
-        b = row[answer_column]
+    df['add'] = ''  # characters that need to be added to match answer
+    df['delete'] = ''  # characters that need to be deleted to match answer
+    for idx, row in df.iterrows():  # iterate through each row
+        a = row[wrong_column]  # ocr engine's output
+        b = row[answer_column]  # answer
         add_list = []
         delete_list = []
-        # print('{} => {}'.format(a,b))
-        for i,s in enumerate(difflib.ndiff(a, b)):
+        for i,s in enumerate(difflib.ndiff(a, b)):  # iterate through the differences
             if s[0]==' ': continue
-            elif s[0]=='-':
+            elif s[0]=='-':  # characters that need to be deleted to match answer
                 delete_list.append(s[-1])
-                # print(u'Delete "{}"'.format(s[-1]))
-            elif s[0]=='+':
+            elif s[0]=='+':  # characters that need to be added to match answer
                 add_list.append(s[-1])
-                # print(u'Add "{}"'.format(s[-1]))
         if len(delete_list) > 0:
             df.loc[idx, 'delete'] = "|".join(delete_list)
         if len(add_list) > 0:
@@ -127,11 +124,12 @@ if __name__ == '__main__':
     import difflib
     import sys
 
-    try:
+    try:  # check if test size is given
         test_size = int(sys.argv[1])
     except:
         test_size = 100
-    try:
+
+    try:  # check if test type is given
         test_type = sys.argv[2]  # text or number
     except:
         test_type = 'text'
@@ -142,16 +140,17 @@ if __name__ == '__main__':
     easy_list = []
     tsa_time_used = 0
     easy_time_used = 0
-    rw = RandomWords()
+    rw = RandomWords()  # used to generate random words
     for i in range(test_size):
         print(i)
         cont = 1
+
         # create data
         if test_type == 'number':
             text = str(round(random.uniform(10000, 99999),2))
         elif test_type == 'text':
             text = " ".join(rw.random_words(count=2))  # generate two words
-            text = text.replace('-', ' ')  # replace '-' for easyocr
+            text = text.replace('-', ' ')  # replace '-' since easyocr doesn't interpret '-'
             if len(text) > 22:  # in case the text is beyond the image size
                 text = text[:22]
 
