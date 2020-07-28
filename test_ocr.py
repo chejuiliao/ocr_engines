@@ -127,7 +127,7 @@ if __name__ == '__main__':
     try:  # check if test size is given
         test_size = int(sys.argv[1])
     except:
-        test_size = 100
+        test_size = 1000
 
     try:  # check if test type is given
         test_type = sys.argv[2]  # text or number
