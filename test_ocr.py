@@ -71,8 +71,10 @@ def easyocr_read(file: str):
     reader = easyocr.Reader(['th','en'], gpu = True)
     results = reader.readtext(file)
     results = sorted(results, key=lambda x: x[0][0])  # sort text from left to right
-    text_results = [x[-2] for x in results][0]  # get text
-    easy_output = text_results.strip()  # clean unnecessary space
+    text_results = [x[-2] for x in results]  # get text
+    easy_output = " ".join(text_results)  # join together
+    easy_output = easy_output.strip()  # clean up spaces
+    easy_output = re.sub('\s{2,}', ' ', easy_output)  # clean up spaces
     
     return easy_output
 
@@ -123,6 +125,7 @@ if __name__ == '__main__':
     import pandas as pd
     import difflib
     import sys
+    import re
 
     try:  # check if test size is given
         test_size = int(sys.argv[1])
