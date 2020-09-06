@@ -59,16 +59,17 @@ def tesseract_read(file: str):
     
     return tsa_output
 
-def easyocr_read(file: str):
+def easyocr_read(file: str, reader):
     """
     extract text from the image using EasyOCR
 
     :param file: path to the image
     :type file: str
+    :param reader: easyocr reader
+    :type reader: easyocr.Reader
     :return: text
     :rtype: str
     """
-    reader = easyocr.Reader(['th','en'], gpu = True)
     results = reader.readtext(file)
     results = sorted(results, key=lambda x: x[0][0])  # sort text from left to right
     text_results = [x[-2] for x in results]  # get text
@@ -127,6 +128,8 @@ if __name__ == '__main__':
     import sys
     import re
 
+    reader = easyocr.Reader(['th', 'en'], gpu = True)
+
     try:  # check if test size is given
         test_size = int(sys.argv[1])
     except:
@@ -167,7 +170,7 @@ if __name__ == '__main__':
         
         # get result from easyocr
         easy_start_time = time.time()
-        easy_result = easyocr_read(file)
+        easy_result = easyocr_read(file, reader)
         easy_end_time = time.time()
         easy_time_used = easy_time_used + (easy_end_time-easy_start_time)/60
         
