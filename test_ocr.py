@@ -128,7 +128,7 @@ if __name__ == '__main__':
     import sys
     import re
 
-    reader = easyocr.Reader(['th', 'en'], gpu = True)
+    reader = easyocr.Reader(['en'], gpu = True)
 
     try:  # check if test size is given
         test_size = int(sys.argv[1])
