@@ -2,7 +2,7 @@ cssselect==1.1.0
 cycler==0.10.0
 decorator==4.4.2
 easyocr==1.1.8
-future==0.18.2
+future==0.18.3
 imageio==2.9.0
 kiwisolver==1.2.0
 lxml==4.5.2
